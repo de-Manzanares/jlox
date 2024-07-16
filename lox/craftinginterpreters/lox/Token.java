@@ -1,11 +1,13 @@
 package craftinginterpreters.lox;
 
 class Token {
-  final TokenType type;
+  // package-private member variables (default access level is package-private)
+  final TokenType type; // `final` is similar to `const` in c++
   final String lexeme;
   final Object literal;
   final int line;
 
+  // constructor
   Token(TokenType type, String lexeme, Object literal, int line) {
     this.type = type;
     this.lexeme = lexeme;
