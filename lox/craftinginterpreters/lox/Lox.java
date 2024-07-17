@@ -9,7 +9,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
-  public static void main(String[] args) throws IOException {
+  private static final Interpreter interpreter = new Interpreter();
+  static boolean hadError = false; // don't run a program with an error
+  static boolean hadRuntimeError = false;
+
+  public static void main(String[] args) throws IOException, RuntimeError {
     if (args.length > 1) {
       System.out.println("Usage: jlox [script]");
       System.exit(64);
@@ -20,10 +24,9 @@ public class Lox {
     }
   }
 
-  static boolean hadError = false; // don't run a program with an error
 
   // run file `lox <FILENAME>`
-  private static void runFile(String path) throws IOException {
+  private static void runFile(String path) throws IOException, RuntimeError {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     // runs the Lexer with a String parameter
     // the String is created by decoding the bytes using UTF-8
@@ -31,10 +34,11 @@ public class Lox {
 
     // Indicate an error in the exit code
     if (hadError) System.exit(65);
+    if (hadRuntimeError) System.exit(70);
   }
 
   // run REPL `lox`
-  private static void runPrompt() throws IOException {
+  private static void runPrompt() throws IOException, RuntimeError {
     // reads bytes from console input and decodes to UTF-8 characters
     InputStreamReader input = new InputStreamReader(System.in);
     // wrap with a buffered reader?
@@ -49,13 +53,13 @@ public class Lox {
     }
   }
 
-  private static void run(String source) {
+  private static void run(String source) throws RuntimeError {
     Lexer lexer = new Lexer(source);          // lexical analysis
     List<Token> tokens = lexer.lexTokens();   // breaking a source into tokens
     Parser parser = new Parser(tokens);
     Expr expression = parser.parse();
     if (hadError) return;
-    System.out.println(new AstPrinter().print(expression));
+    interpreter.interpret(expression);
   }
 
   // error handler
@@ -76,6 +80,14 @@ public class Lox {
       report(token.line, " at '" + token.lexeme + "'", message);
     }
   }
+
+  static void runtimeError(RuntimeError error) {
+    System.err.println(error.getMessage() +
+            "\n[line " + error.token.line + "]");
+    hadRuntimeError = true;
+  }
+
+
 }
 
 
