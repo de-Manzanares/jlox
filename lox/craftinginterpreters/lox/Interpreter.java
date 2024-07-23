@@ -1,8 +1,21 @@
 package craftinginterpreters.lox;
 
-class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+
+class Interpreter implements Expr.Visitor<Object>,
+        Stmt.Visitor<Void> {
   // post order traversal
   // each node evaluates its children before doing its own work
+
+  void interpret(List<Stmt> statements) {
+    try {
+      for (Stmt statement : statements) {
+        execute(statement);
+      }
+    } catch (RuntimeError error) {
+      Lox.runtimeError(error);
+    }
+  }
 
   @Override
   public Object visitLiteralExpr(Expr.Literal expr) {
@@ -57,6 +70,10 @@ class Interpreter implements Expr.Visitor<Object> {
 
   private Object evaluate(Expr expr) throws RuntimeError {
     return expr.accept(this);
+  }
+
+  private void execute(Stmt stmt) throws RuntimeError {
+    stmt.accept(this);
   }
 
   @Override
@@ -114,8 +131,16 @@ class Interpreter implements Expr.Visitor<Object> {
     throw new RuntimeError(operator, "Operand must be a number.");
   }
 
-  void interpret(Expr expression) throws RuntimeError {
-    Object value = evaluate(expression);
+  @Override
+  public Void visitExpressionStmt(Stmt.Expression stmt) throws RuntimeError {
+    evaluate(stmt.expression);
+    return null;
+  }
+
+  @Override
+  public Void visitPrintStmt(Stmt.Print stmt) throws RuntimeError {
+    Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
+    return null;
   }
 }

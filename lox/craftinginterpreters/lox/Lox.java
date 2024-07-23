@@ -57,9 +57,9 @@ public class Lox {
     Lexer lexer = new Lexer(source);          // lexical analysis
     List<Token> tokens = lexer.lexTokens();   // breaking a source into tokens
     Parser parser = new Parser(tokens);
-    Expr expression = parser.parse();
+    List<Stmt> statements = parser.parse();
     if (hadError) return;
-    interpreter.interpret(expression);
+    interpreter.interpret(statements);
   }
 
   // error handler
