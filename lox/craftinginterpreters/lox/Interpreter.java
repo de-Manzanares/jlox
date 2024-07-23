@@ -201,6 +201,14 @@ class Interpreter implements Expr.Visitor<Object>,
   }
 
   @Override
+  public Void visitWhileStmt(Stmt.While stmt) throws RuntimeError {
+    while (isTruthy(evaluate(stmt.condition))) {
+      execute(stmt.body);
+    }
+    return null;
+  }
+
+  @Override
   public Object visitAssignExpr(Expr.Assign expr) throws RuntimeError {
     Object value = evaluate(expr.value);
     environment.assign(expr.name, value);
