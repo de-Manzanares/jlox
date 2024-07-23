@@ -79,6 +79,25 @@ class Interpreter implements Expr.Visitor<Object>,
     stmt.accept(this);
   }
 
+  void executeBlock(List<Stmt> statements, Environment environment) throws RuntimeError {
+    Environment previous = this.environment;
+    try {
+      this.environment = environment;
+
+      for (Stmt statement : statements) {
+        execute(statement);
+      }
+    } finally {
+      this.environment = previous;
+    }
+  }
+
+  @Override
+  public Void visitBlockStmt(Stmt.Block stmt) throws RuntimeError {
+    executeBlock(stmt.statements, new Environment(environment));
+    return null;
+  }
+
   @Override
   public Object visitBinaryExpr(Expr.Binary expr) throws RuntimeError {
     Object left = evaluate(expr.left);
