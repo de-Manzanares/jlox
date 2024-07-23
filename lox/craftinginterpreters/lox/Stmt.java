@@ -5,12 +5,17 @@ import java.util.List;
 abstract class Stmt {
   interface Visitor<R> {
     R visitBlockStmt(Block stmt) throws RuntimeError;
+
     R visitExpressionStmt(Expression stmt) throws RuntimeError;
+
     R visitIfStmt(If stmt) throws RuntimeError;
+
     R visitPrintStmt(Print stmt) throws RuntimeError;
+
     R visitVarStmt(Var stmt) throws RuntimeError;
   }
- static class Block extends Stmt {
+
+  static class Block extends Stmt {
     Block(List<Stmt> statements) {
       this.statements = statements;
     }
@@ -22,7 +27,8 @@ abstract class Stmt {
 
     final List<Stmt> statements;
   }
- static class Expression extends Stmt {
+
+  static class Expression extends Stmt {
     Expression(Expr expression) {
       this.expression = expression;
     }
@@ -34,7 +40,8 @@ abstract class Stmt {
 
     final Expr expression;
   }
- static class If extends Stmt {
+
+  static class If extends Stmt {
     If(Expr condition, Stmt thenBranch, Stmt elseBranch) {
       this.condition = condition;
       this.thenBranch = thenBranch;
@@ -50,7 +57,8 @@ abstract class Stmt {
     final Stmt thenBranch;
     final Stmt elseBranch;
   }
- static class Print extends Stmt {
+
+  static class Print extends Stmt {
     Print(Expr expression) {
       this.expression = expression;
     }
@@ -62,7 +70,8 @@ abstract class Stmt {
 
     final Expr expression;
   }
- static class Var extends Stmt {
+
+  static class Var extends Stmt {
     Var(Token name, Expr initializer) {
       this.name = name;
       this.initializer = initializer;
