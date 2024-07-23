@@ -7,6 +7,8 @@ class Interpreter implements Expr.Visitor<Object>,
   // post order traversal
   // each node evaluates its children before doing its own work
 
+  private Environment environment = new Environment();
+
   void interpret(List<Stmt> statements) {
     try {
       for (Stmt statement : statements) {
@@ -37,6 +39,7 @@ class Interpreter implements Expr.Visitor<Object>,
     // unreachable
     return null;
   }
+
 
   private boolean isTruthy(Object object) {
     if (object == null) return false;
@@ -142,5 +145,21 @@ class Interpreter implements Expr.Visitor<Object>,
     Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
     return null;
+  }
+
+  @Override
+  public Void visitVarStmt(Stmt.Var stmt) throws RuntimeError {
+    Object value = null;
+    if (stmt.initializer != null) {
+      value = evaluate(stmt.initializer);
+    }
+
+    environment.define(stmt.name.lexeme, value);
+    return null;
+  }
+
+  @Override
+  public Object visitVariableExpr(Expr.Variable expr) throws RuntimeError {
+    return environment.get(expr.name);
   }
 }
