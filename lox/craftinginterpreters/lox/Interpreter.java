@@ -160,6 +160,16 @@ class Interpreter implements Expr.Visitor<Object>,
   }
 
   @Override
+  public Void visitIfStmt(Stmt.If stmt) throws RuntimeError {
+    if (isTruthy(evaluate(stmt.condition))) {
+      execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != null) {
+      execute(stmt.elseBranch);
+    }
+    return null;
+  }
+
+  @Override
   public Void visitPrintStmt(Stmt.Print stmt) throws RuntimeError {
     Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
