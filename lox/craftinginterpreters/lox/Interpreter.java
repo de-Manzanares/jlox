@@ -159,6 +159,13 @@ class Interpreter implements Expr.Visitor<Object>,
   }
 
   @Override
+  public Object visitAssignExpr(Expr.Assign expr) throws RuntimeError {
+    Object value = evaluate(expr.value);
+    environment.assign(expr.name, value);
+    return value;
+  }
+
+  @Override
   public Object visitVariableExpr(Expr.Variable expr) throws RuntimeError {
     return environment.get(expr.name);
   }

@@ -15,6 +15,17 @@ class Environment {
             "Undefined variable '" + name.lexeme + "'.");
   }
 
+  void assign(Token name, Object value) throws RuntimeError {
+    if (values.containsKey(name.lexeme)) {
+      values.put(name.lexeme, value);
+      return;
+    }
+
+    throw new RuntimeError(name,
+            "Undefined variable '" + name.lexeme + "'.");
+  }
+
+
   /*
    * "My rule about variables and scoping is, “When in doubt, do what Scheme
    * does”. The Scheme folks have probably spent more time thinking about
